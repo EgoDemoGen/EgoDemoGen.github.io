@@ -72,31 +72,61 @@
           <h1 class="title is-1 publication-title">EgoDemoGen: Novel Egocentric Demonstration Generation Enables Viewpoint-Robust Manipulation </h1>
           <div class="is-size-5 publication-authors">
             <span class="author-block">
-              <a href="https://scholar.google.com/citations?user=96lsfiUAAAAJ&hl">Yuan Xu</a><sup>1*</sup>,</span>
+              <a href="#">Yuan Xu</a><sup>1,2*</sup>,</span>
             <span class="author-block">
-              <a href="https://scholar.google.com/citations?user=NmwjI0AAAAAJ&hl">Jiangbing Yang</a><sup>1*</sup>,</span>
+              <a href="#">Jiabing Yang</a><sup>1,2*</sup>,</span>
             <span class="author-block">
-              <a >Guan Huang</a><sup>1,2</sup>,</span>
+              <a href="#">Xiaofeng Wang</a><sup>3,4</sup>,</span>
             <span class="author-block">
-              <a >Xinze Chen</a><sup>1</sup>,</span>
+              <a href="#">Yixiang Chen</a><sup>1,2</sup>,</span>
             <span class="author-block">
-              <a >Jiagang Zhu</a><sup>1</sup>,</span>
+              <a href="#">Zheng Zhu</a><sup>3</sup>,</span>
             <span class="author-block">
-              <a href="https://scholar.google.com/citations?user=TN8uDQoAAAAJ&hl">Xiaofeng Wang</a><sup>2</sup>,</span>
-            </span><br>
-
+              <a href="#">Bowen Fang</a><sup>1,2</sup>,</span>
+            <br>
+            <span class="author-block">
+              <a href="#">Guan Huang</a><sup>3</sup>,</span>
+            <span class="author-block">
+              <a href="#">Xinze Chen</a><sup>3</sup>,</span>
+            <span class="author-block">
+              <a href="#">Yun Ye</a><sup>3</sup>,</span>
+            <span class="author-block">
+              <a href="#">Qiang Zhang</a><sup>5</sup>,</span>
+            <span class="author-block">
+              <a href="#">Peiyan Li</a><sup>1,2</sup>,</span>
+            <span class="author-block">
+              <a href="#">Xiangnan Wu</a><sup>1,2</sup>,</span>
+            <span class="author-block">
+              <a href="#">Kai Wang</a><sup>2</sup>,</span>
+            <br>
+            <span class="author-block">
+              <a href="#">Bing Zhan</a><sup>1,2</sup>,</span>
+            <span class="author-block">
+              <a href="#">Shuo Lu</a><sup>1,2</sup>,</span>
+            <span class="author-block">
+              <a href="#">Jing Liu</a><sup>1,2,6</sup>,</span>
+            <span class="author-block">
+              <a href="#">Nianfeng Liu</a><sup>1,2,6</sup>,</span>
+            <span class="author-block">
+              <a href="#">Yan Huang</a><sup>1,2,6</sup>,</span>
+            <span class="author-block">
+              <a href="#">Liang Wang</a><sup>1,2</sup></span>
           </div>
 
           <div class="is-size-5 publication-authors">
-            <span class="author-block">GigaAI<sup>1</sup>,</span>&nbsp;
-            <span class="author-block">CASIA<sup>2</sup></span>&nbsp;
+            <span class="author-block">UCAS<sup>1</sup>,</span>
+            <span class="author-block">CASIA<sup>2</sup>,</span>
+            <span class="author-block">GigaAI<sup>3</sup>,</span>
+            <span class="author-block">THU<sup>4</sup>,</span>
+            <span class="author-block">X-Humanoid<sup>5</sup>,</span>
+            <span class="author-block">FiveAges<sup>6</sup></span>
           </div>
           <div class="is-size-5 publication-authors">
             <span class="author-block"><sup>*</sup>Equal Contribution</span>
           </div>
 
           <div class="column has-text-centered">
-            <div class="publication-links">
+            <!-- <div class="publication-links"> -->
               <!-- PDF Link. -->
               <!-- <span class="link-block">
                 <a href="https://arxiv.org/pdf/2309.09777.pdf"
@@ -137,28 +167,14 @@
 </section> -->
 
 
-<!-- <section class="section">
+<section class="section">
   <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            World models, especially in autonomous driving, are trending and drawing extensive attention due to its 
-            capacity for comprehending driving environments. The established world model holds immense potential 
-            for the generation of high-quality driving videos, and driving policies for safe maneuvering. However, 
-            a critical limitation in relevant research lies in its predominant focus on gaming environments or simulated 
-            settings, thereby lacking the representation of real-world driving scenarios. Therefore, we introduce 
-            DriveDreamer, a pioneering world model entirely derived from real-world driving scenarios. Regarding that 
-            modeling the world in intricate driving scenes entails an overwhelming search space, we propose harnessing 
-            the powerful diffusion model to construct a comprehensive representation of the complex environment. Furthermore, 
-            we introduce a two-stage training pipeline. In the initial phase, DriveDreamer acquires a deep understanding of 
-            structured traffic constraints, while the subsequent stage equips it with the ability to anticipate future states. 
-            The proposed DriveDreamer is the first world model established from real-world driving scenarios. We instantiate 
-            DriveDreamer on the challenging nuScenes benchmark, and extensive experiments verify that DriveDreamer empowers precise,
-            controllable video generation that faithfully captures the structural constraints of real-world traffic scenarios.  
-            Additionally, DriveDreamer enables the generation of realistic and reasonable driving policies, opening avenues for 
-            interaction and practical applications.
+            Imitation learning based policies perform well in robotic manipulation, but they often degrade under <em>egocentric viewpoint shifts</em> when trained from a single egocentric viewpoint. To address this issue, we present <strong>EgoDemoGen</strong>, a framework that generates <em>paired</em> novel egocentric demonstrations by retargeting actions in the novel egocentric frame and synthesizing the corresponding egocentric observation videos with proposed generative video repair model <strong>EgoViewTransfer</strong>, which is conditioned by a novel-viewpoint reprojected scene video and a robot-only video rendered from the retargeted joint actions. EgoViewTransfer is finetuned from a pretrained video generation model using self-supervised double reprojection strategy. We evaluate EgoDemoGen on both simulation (RoboTwin2.0) and real-world robot. After training with a mixture of EgoDemoGen-generated novel egocentric demonstrations and original standard egocentric demonstrations, policy success rate improves <strong>absolutely</strong> by <strong>+17.0%</strong> for standard egocentric viewpoint and by <strong>+17.7%</strong> for novel egocentric viewpoints in simulation. On real-world robot, the <strong>absolute</strong> improvements are <strong>+18.3%</strong> and <strong>+25.8%</strong>. Moreover, performance continues to improve as the proportion of EgoDemoGen-generated demonstrations increases, with diminishing returns. These results demonstrate that EgoDemoGen provides a practical route to egocentric viewpoint-robust robotic manipulation.
           </p>
         </div> 
       </div>
@@ -166,84 +182,104 @@
 
 
   </div>
-</section> -->
+</section>
 
-<!-- 
+
 <section class="section" id="Method">
   <div class="container is-max-desktop content">
     <h2 class="title">Method</h2>
+    
+    <!-- Overview Section -->
+    <h3 class="title is-4 has-text-centered">Overview</h3>
     <section class="hero method">
       <div class="container is-max-desktop">
         <div class="hero-body">
-          <img id="method" autoplay muted loop playsinline height="100%" src="./static/images/method.png" style="width:100%;height:100%;">
-          <p>
-            The DriveDreamer framework begins with an initial reference frame and its corresponding road structural information (i.e., HDMap and 3D box). Within this context, DriveDreamer leverages the proposed ActionFormer to predict forthcoming road structural features in the latent space. These predicted features serve as conditions and are provided to Auto-DM, which generates future driving videos. Simultaneously, the utilization of text prompts allows for dynamic adjustments to the driving scenario style (e.g., weather and time of the day). Moreover, DriveDreamer incorporates historical action information and the multi-scale latent features extracted from Auto-DM, which are combined to generate reasonable future driving actions.  In essence, DriveDreamer offers a comprehensive framework that seamlessly integrates multi-modal inputs to generate future driving videos and driving policies, thereby advancing the capabilities of autonomous-driving systems.
-			<!--/
-            Method overview: Starting from a randomly sampled latent code <span class="math inline">\(x_{T}^{1}\)</span>, we apply <span class="math inline">\(\Delta t\)</span> DDIM backward steps to obtain <span class="math inline">\(x_{T'}^{1}\)</span> using a pre-trained Stable Diffusion model (SD). A specified motion field results for each frame <span class="math inline">\(k\)</span> in a warping function <span class="math inline">\(W_k\)</span> that turns <span class="math inline">\(x_{T'}^{1}\)</span> to <span class="math inline">\(x_{T'}^{k}\)</span>. By enhancing the latent codes with motion dynamics, we determine the global scene and camera motion and achieve temporal consistency in the background and the global scene.
-            A subsequent DDPM forward application delivers latent codes <span class="math inline">\(x_{T}^{k}\)</span> for <span class="math inline">\(k=1,\ldots,m\)</span>. By using the (probabilistic) DDPM method, a greater degree of freedom is achieved with respect to the motion of objects.
-            Finally, the latent codes are passed to our modified SD model using the proposed cross-frame attention, which uses keys and values from the first frame to generate the image of frame <span class="math inline">\(k=1,\ldots,m\)</span>. By using cross-frame attention,  the appearance and the identity of the foreground object are preserved  throughout the sequence. 
-            Optionally, we apply background smoothing. To this end, we employ salient object detection to obtain for each frame <span class="math inline">\(k\) a mask <span class="math inline">\(M^{k}\)</span> indicating the foreground pixels. Finally, for the background (using the mask <span class="math inline">\(M^{k}\)</span>), a convex combination between the latent code <span class="math inline">\(x_{t}^{1}\)</span> of frame one warped to frame <span class="math inline">\(k\)</span> and the latent code <span class="math inline">\(x_{t}^{k}\)</span> is used to further improve the temporal consistency of the background.-->
+          <img id="overview" autoplay muted loop playsinline height="100%" src="./static/images/overview.png" style="width:100%;height:100%;">
+          <p class="has-text-centered" style="font-style: italic; margin-top: 10px;">
+            Framework of EgoDemoGen.
           </p>
+            <p>
+              <strong>Overview of EgoDemoGen.</strong> <strong>(1) Egocentric View Transform:</strong> a <em>Novel Egocentric View</em> is specified by robot base motion <span class="math inline">\((\Delta x,\ \Delta y,\ \Delta \theta)\)</span>. <strong>(2) Action Retargeting:</strong> the original joint actions <span class="math inline">\(Q\)</span> is <em>retargeted</em> into the novel robot base frame to yield a kinematically feasible joint actions <span class="math inline">\(\tilde{Q}\)</span>. <strong>(3) Novel Egocentric Observations:</strong> starting from the original observation video <span class="math inline">\(V\)</span>, we mask the robot, reproject the scene to the novel viewpoint, perform hole filling, and apply <strong>EgoViewTransfer</strong> to synthesize the coherent observations <span class="math inline">\(\tilde{V}\)</span>. <strong>(4) Novel Demonstrations & Policy Training:</strong> we obtain aligned pairs <span class="math inline">\((\tilde{V},\ \tilde{Q})\)</span> for training egocentric viewpoint-robust policies.
+            </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- EgoViewTransfer Section -->
+    <h3 class="title is-4 has-text-centered">EgoViewTransfer</h3>
+    <section class="hero method">
+      <div class="container is-max-desktop">
+        <div class="hero-body">
+          <img id="egoviewtransfer" autoplay muted loop playsinline height="100%" src="./static/images/double.png" style="width:100%;height:100%;">
+          <p class="has-text-centered" style="font-style: italic; margin-top: 10px;">
+            Architecture of EgoViewTransfer.
+          </p>
+            <p>
+              <strong>EgoViewTransfer.</strong> <strong>(a) Double reprojection.</strong> It simulates artifacts and occlusions caused by viewpoint change. The double reprojected video are aligned with the original video to form input/label pairs for training. <strong>(b) Architecture of EgoViewTransfer.</strong> The model takes a degraded scene video and a robot video as conditions and generates egocentric observation videos consistent with dual inputs.
+            </p>
         </div>
       </div>
     </section>
   </div>
-</section> -->
+</section>
 
 
-<!-- <section class="section" id="Results">
+<section class="section" id="Results">
   <div class="container is-max-desktop content">
     <h2 class="title">Results</h2>
     <section class="hero method">
     <div class="container is-max-desktop">
     <div class="hero-body">  
 
-  <h4 class="title">1. Diverse Driving Video Generation.</h4>
+  <h4 class="title">1. Visualization of policy execution in the Simulation.</h4>
     <div class="container is-max-desktop">
-        <video preload="auto"poster="" id="tree" autoplay controls muted loop width="12000px" outline="0px"> 
-          <source src="./static/videos/diverse.mp4"
-          type="video/mp4">
-        </video>
+        <img id="simulation_policy" src="./static/images/simulation_policy.png" style="width:100%;height:100%;">
+        <p class="has-text-centered" style="font-style: italic; margin-top: 10px;">
+          Visualization of policy execution in the Simulation. The <strong style="color: green;">green</strong> boxes denote the standard egocentric view, the <strong style="color: red;">red</strong> boxes denote the random novel egocentric view.
+        </p>
     </div> 
     <br>
     <p style="margin-bottom: 30px;"></p>
 
-	<h4 class="title">2. Driving Video Generation with Traffic Condition and Different Text Prompts (Sunny, Rainy, Night)</h4>
+	<h4 class="title">2. Visualization of policy execution in the Real World.</h4>
   <div class="container is-max-desktop">
     <div style="text-align: center;">
-      <video preload="auto" poster="" id="tree" autoplay controls muted loop width="1200px" outline="0px" style="display: inline-block;">
-        <source src="./static/videos/text_driven.mp4" type="video/mp4">
-      </video>
+      <img id="realworld_policy" src="./static/images/realworld_policy.png" style="width:100%;height:100%;">
+      <p class="has-text-centered" style="font-style: italic; margin-top: 10px;">
+        Visualization of policy execution in the Real World. The <strong style="color: green;">green</strong> boxes denote the standard egocentric view, the <strong style="color: red;">red</strong> boxes denote the counterclockwise egocentric view, and the <strong style="color: blue;">blue</strong> boxes denote the clockwise egocentric view.
+      </p>
     </div>
   </div>
   <br>
 	<p style="margin-bottom: 30px;"></p>
 
-  <h4 class="title">3. Future Driving Video Generation with Action Interaction.</h4>
+  <h4 class="title">3. Visualization of EgoViewTransfer in Simulation.</h4>
 
   <div class="container is-max-desktop">
     <div style="text-align: center;">
-      <video preload="auto" poster="" id="tree" autoplay controls muted loop width="1000px" outline="0px" style="display: inline-block;">
-        <source src="./static/videos/action_interact_concat.mp4" type="video/mp4">
-      </video>
+      <img id="simulation_egoviewtransfer" src="./static/images/simulation_egoviewtransfer.png" style="width:100%;height:100%;">
+      <p class="has-text-centered" style="font-style: italic; margin-top: 10px;">
+        Visualization of EgoViewTransfer in Simulation. The <strong style="color: green;">green</strong> boxes denote the GT video, the <strong style="color: red;">red</strong> boxes denote the Video w/ EgoViewTransfer, and the <strong style="color: blue;">blue</strong> boxes denote the Video w/o EgoViewTransfer (Naive Composition).
+      </p>
     </div>
   </div>
   <br>
 	<p style="margin-bottom: 30px;"></p>
 
-	<h4 class="title">4. Future Driving Action Generation.</h4>
+	<h4 class="title">4. Visualization of EgoViewTransfer in Real World.</h4>
 
   <div class="container is-max-desktop">
     <div style="text-align: center;">
-      <video preload="auto" poster="" id="tree" autoplay controls muted loop width="1000px" outline="0px" style="display: inline-block;">
-        <source src="./static/videos/action_pred_concat.mp4" type="video/mp4">
-      </video>
+      <img id="realworld_egoviewtransfer" src="./static/images/realworld_egoviewtransfer.png" style="width:100%;height:100%;">
+      <p class="has-text-centered" style="font-style: italic; margin-top: 10px;">
+        Visualization of EgoViewTransfer in Real World. The <strong style="color: red;">red</strong> boxes denote the Video w/ EgoViewTransfer, the <strong style="color: blue;">blue</strong> boxes denote the Video w/o EgoViewTransfer (Naive Composition).
+      </p>
     </div>
   </div>
 
   </div></div></section>
   </div>
-</section> -->
+</section>
 
 	
 	
@@ -251,22 +287,22 @@
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
     <p> If you use our work in your research, please cite: </p>
-    <pre><code>@article{wang2023drive,
+    <pre><code>@article{xu2025egodemogen,
   title={EgoDemoGen: Novel Egocentric Demonstration Generation Enables Viewpoint-Robust Manipulation},
-  author={Xu, Yuan and Yang, Jiangbing and Wang, Xiaofeng},
-  journal={arXiv preprint arXiv:2309.09777},
-  year={2023}
+  author={Xu, Yuan and Yang, Jiabing and Wang, Xiaofeng and Chen, Yixiang and Zhu, Zheng and Fang, Bowen and Huang, Guan and Chen, Xinze and Ye, Yun and Zhang, Qiang and Li, Peiyan and Wu, Xiangnan and Wang, Kai and Zhan, Bing and Lu, Shuo and Liu, Jing and Liu, Nianfeng and Huang, Yan and Wang, Liang},
+  journal={arXiv preprint arXiv:xxxx.xxxxx},
+  year={2025}
 }</code></pre>
   </div>
 </section>
 
 <footer class="footer">
   <div class="container">
-    <div class="content has-text-centered">
+    <!-- <div class="content has-text-centered">
       <a class="icon-link" href="https://github.com/JeffWang987/DriveDreamer" class="external-link" disabled>
         <i class="fab fa-github"></i>
       </a>
-    </div>
+    </div> -->
     <div class="columns is-centered">
       <div class="column is-8">
         <div class="content">
