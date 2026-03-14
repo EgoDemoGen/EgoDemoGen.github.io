@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="description"
-        content="EgoDemoGen: Novel Egocentric Demonstration Generation Enables Viewpoint-Robust Manipulation">
+        content="Egocentric Demonstration Generation for Viewpoint Generalization in Robotic Manipulation">
   <meta name="keywords" content="DriveDreamer">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>EgoDemoGen: Novel Egocentric Demonstration Generation Enables Viewpoint-Robust Manipulation</title>
+  <title>Egocentric Demonstration Generation for Viewpoint Generalization in Robotic Manipulation</title>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
@@ -69,7 +69,7 @@
     <div class="container is-max-desktop">
       <div class="columns is-centered">
         <div class="column has-text-centered">
-          <h1 class="title is-1 publication-title">EgoDemoGen: Novel Egocentric Demonstration Generation Enables Viewpoint-Robust Manipulation </h1>
+          <h1 class="title is-1 publication-title">EgoDemoGen: Egocentric Demonstration Generation for Viewpoint Generalization in Robotic Manipulation </h1>
           <div class="is-size-5 publication-authors">
             <span class="author-block">
               <a href="#">Yuan Xu</a><sup>1,2*</sup>,</span>
@@ -78,31 +78,18 @@
             <span class="author-block">
               <a href="#">Xiaofeng Wang</a><sup>3,4</sup>,</span>
             <span class="author-block">
-              <a href="#">Yixiang Chen</a><sup>1,2</sup>,</span>
-            <span class="author-block">
               <a href="#">Zheng Zhu</a><sup>3</sup>,</span>
             <span class="author-block">
-              <a href="#">Bowen Fang</a><sup>1,2</sup>,</span>
-            <br>
-            <span class="author-block">
-              <a href="#">Guan Huang</a><sup>3</sup>,</span>
-            <span class="author-block">
-              <a href="#">Xinze Chen</a><sup>3</sup>,</span>
-            <span class="author-block">
-              <a href="#">Yun Ye</a><sup>3</sup>,</span>
-            <span class="author-block">
-              <a href="#">Qiang Zhang</a><sup>5</sup>,</span>
+              <a href="#">Yixiang Chen</a><sup>1,2</sup>,</span>
             <span class="author-block">
               <a href="#">Peiyan Li</a><sup>1,2</sup>,</span>
             <span class="author-block">
-              <a href="#">Xiangnan Wu</a><sup>1,2</sup>,</span>
-            <span class="author-block">
-              <a href="#">Kai Wang</a><sup>2</sup>,</span>
+              <a href="#">Qiang Zhang</a><sup>5</sup>,</span>
             <br>
             <span class="author-block">
-              <a href="#">Bing Zhan</a><sup>1,2</sup>,</span>
-            <span class="author-block">
               <a href="#">Shuo Lu</a><sup>1,2</sup>,</span>
+            <span class="author-block">
+              <a href="#">Bing Zhan</a><sup>1,2</sup>,</span>
             <span class="author-block">
               <a href="#">Jing Liu</a><sup>1,2,6</sup>,</span>
             <span class="author-block">
@@ -232,26 +219,172 @@
     <div class="hero-body">  
 
   <h4 class="title">1. Visualization of policy execution in the Simulation.</h4>
-    <div class="container is-max-desktop">
-        <p class="has-text-centered" style="font-style: italic; margin-bottom: 10px;">
-          Visualization of policy execution in the Simulation. The <strong style="color: green;">green</strong> boxes denote the standard egocentric view, the <strong style="color: red;">red</strong> boxes denote the random novel egocentric view.
-        </p>
-        <img id="simulation_policy" src="./static/images/simulation_policy.png" style="width:100%;height:100%;">
-    </div> 
-    <br>
-    <p style="margin-bottom: 30px;"></p>
-
-	<h4 class="title">2. Visualization of policy execution in the Real World.</h4>
   <div class="container is-max-desktop">
-    <div style="text-align: center;">
-      <p class="has-text-centered" style="font-style: italic; margin-bottom: 10px;">
-        Visualization of policy execution in the Real World. The <strong style="color: green;">green</strong> boxes denote the standard egocentric view, the <strong style="color: red;">red</strong> boxes denote the counterclockwise egocentric view, and the <strong style="color: blue;">blue</strong> boxes denote the clockwise egocentric view.
-      </p>
-      <img id="realworld_policy" src="./static/images/realworld_policy.png" style="width:100%;height:100%;">
+    <p class="has-text-centered" style="font-style: italic; margin-bottom: 20px;">
+      Each row shows policy execution for one task across three viewpoints: standard egocentric view and 2 random novel egocentric views.
+    </p>
+
+    <!-- Simulation Task: Handover Mic -->
+    <div class="box" style="margin-bottom: 20px;">
+      <h5 class="title is-5 has-text-centered">Handover Mic</h5>
+      <div class="columns is-mobile">
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Standard View</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/videos/handovermic/standard-view.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 1</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/videos/handovermic/novel-view1.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 2</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/videos/handovermic/novel-view2.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+
+    <!-- Simulation Task: Lift Pot -->
+    <div class="box" style="margin-bottom: 20px;">
+      <h5 class="title is-5 has-text-centered">Lift Pot</h5>
+      <div class="columns is-mobile">
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Standard View</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/videos/liftpot/standard-view.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 1</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/videos/liftpot/novel-view1.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 2</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/videos/liftpot/normal-view2.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+
+    <!-- Simulation Task: Shake Bottle -->
+    <div class="box" style="margin-bottom: 20px;">
+      <h5 class="title is-5 has-text-centered">Shake Bottle</h5>
+      <div class="columns is-mobile">
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Standard View</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/videos/shake/standard-view.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 1</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/videos/shake/novel-view1.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 2</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/videos/shake/novel-view2.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
     </div>
   </div>
   <br>
-	<p style="margin-bottom: 30px;"></p>
+  <p style="margin-bottom: 30px;"></p>
+
+  <h4 class="title">2. Visualization of policy execution in the Real World.</h4>
+  <div class="container is-max-desktop">
+    <p class="has-text-centered" style="font-style: italic; margin-bottom: 20px;">
+      Each row shows policy execution for one task across three viewpoints: standard egocentric view, counterclockwise novel view, and clockwise novel view.
+    </p>
+
+    <!-- Real World Task: Pick Bowl -->
+    <div class="box" style="margin-bottom: 20px;">
+      <h5 class="title is-5 has-text-centered">Pick Bowl</h5>
+      <div class="columns is-mobile">
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Standard View</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/videos/pick-bowl/standard-view.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 1</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/videos/pick-bowl/novel-view1.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 2</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/videos/pick-bowl/normal-view2.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+
+    <!-- Real World Task: Place Bowl on Basket -->
+    <div class="box" style="margin-bottom: 20px;">
+      <h5 class="title is-5 has-text-centered">Place Bowl on Basket</h5>
+      <div class="columns is-mobile">
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Standard View</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/videos/place-bowl-basket/basket.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View (Left)</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/videos/place-bowl-basket/basket-left.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View (Right)</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/videos/place-bowl-basket/basket-right.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+
+    <!-- Real World Task: Place Bowl on Plate -->
+    <div class="box" style="margin-bottom: 20px;">
+      <h5 class="title is-5 has-text-centered">Place Bowl on Plate</h5>
+      <div class="columns is-mobile">
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Standard View</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/videos/place-bowl-plate/plate.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View (Left)</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/videos/place-bowl-plate/plate-left.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View (Right)</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/videos/place-bowl-plate/plate-right.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <p style="margin-bottom: 30px;"></p>
 
   <h4 class="title">3. Novel Egocentric Videos Generated by EgoViewTransfer.</h4>
   <div class="container is-max-desktop">
