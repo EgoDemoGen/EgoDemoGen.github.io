@@ -161,7 +161,7 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Imitation learning based policies perform well in robotic manipulation, but they often degrade under <em>egocentric viewpoint shifts</em> when trained from a single egocentric viewpoint. To address this issue, we present <strong>EgoDemoGen</strong>, a framework that generates <em>paired</em> novel egocentric demonstrations by retargeting actions in the novel egocentric frame and synthesizing the corresponding egocentric observation videos with proposed generative video repair model <strong>EgoViewTransfer</strong>, which is conditioned by a novel-viewpoint reprojected scene video and a robot-only video rendered from the retargeted joint actions. EgoViewTransfer is finetuned from a pretrained video generation model using self-supervised double reprojection strategy. We evaluate EgoDemoGen on both simulation (RoboTwin2.0) and real-world robot. After training with a mixture of EgoDemoGen-generated novel egocentric demonstrations and original standard egocentric demonstrations, policy success rate improves <strong>absolutely</strong> by <strong>+17.0%</strong> for standard egocentric viewpoint and by <strong>+17.7%</strong> for novel egocentric viewpoints in simulation. On real-world robot, the <strong>absolute</strong> improvements are <strong>+18.3%</strong> and <strong>+25.8%</strong>. Moreover, performance continues to improve as the proportion of EgoDemoGen-generated demonstrations increases, with diminishing returns. These results demonstrate that EgoDemoGen provides a practical route to egocentric viewpoint-robust robotic manipulation.
+            Imitation learning based visuomotor policies have achieved strong performance in robotic manipulation, yet they often remain sensitive to <em>egocentric viewpoint shifts</em>. Unlike third-person viewpoint changes that only move the camera, egocentric shifts simultaneously alter both the camera pose and the robot action coordinate frame, making it necessary to jointly transfer action trajectories and synthesize corresponding observations under novel egocentric viewpoints. To address this challenge, we present <strong>EgoDemoGen</strong>, a framework that generates paired observation&ndash;action demonstrations under novel egocentric viewpoints through two key components: 1) <strong>EgoTrajTransfer</strong>, which transfers robot trajectories to the novel egocentric coordinate frame through motion-skill segmentation, geometry-aware transformation, and inverse kinematics filtering; and 2) <strong>EgoViewTransfer</strong>, a conditional video generation model that fuses a novel-viewpoint reprojected scene video and a robot motion video rendered from the transferred trajectory to synthesize photorealistic observations, trained with a self-supervised double reprojection strategy without requiring multi-viewpoint data. Experiments in simulation and real-world settings show that EgoDemoGen consistently improves policy success rates under both standard and novel egocentric viewpoints, with absolute gains of <strong>+24.6%</strong> and <strong>+16.9%</strong> in simulation and <strong>+16.0%</strong> and <strong>+23.0%</strong> on the real robot. Moreover, EgoViewTransfer achieves superior video generation quality for novel egocentric observations.
           </p>
         </div> 
       </div>
@@ -175,19 +175,35 @@
 <section class="section" id="Method">
   <div class="container is-max-desktop content">
     <h2 class="title">Method</h2>
-    
+
     <!-- Overview Section -->
     <h3 class="title is-4 has-text-centered">Overview</h3>
     <section class="hero method">
       <div class="container is-max-desktop">
         <div class="hero-body">
-          <img id="overview" autoplay muted loop playsinline height="100%" src="./static/images/overview.png" style="width:100%;height:100%;">
-          <p class="has-text-centered" style="font-style: italic; margin-top: 10px;">
-            Framework of EgoDemoGen.
+          <img src="./static/images/Overview.png" style="width:100%; height:auto;">
+          <p>
+            <strong>Overview of EgoDemoGen.</strong> Given source demonstrations from a standard egocentric viewpoint, we generate novel demonstrations through four steps:
+            <strong>(1)</strong> sampling novel egocentric viewpoints via robot base motion \((\Delta x, \Delta y, \Delta \theta)\);
+            <strong>(2) EgoTrajTransfer</strong> produces kinematically feasible action trajectories \(\tilde{Q}\) adapted to the novel egocentric coordinate frame, filtering out infeasible viewpoints via inverse kinematics;
+            <strong>(3) EgoViewTransfer</strong> synthesizes photorealistic observation videos \(\tilde{V}\) from the novel egocentric viewpoint, depicting the transferred robot motion;
+            <strong>(4)</strong> the generated demonstrations are combined with original data to train policies that generalize across egocentric viewpoints.
           </p>
-            <p>
-              <strong>Overview of EgoDemoGen.</strong> <strong>(1) Egocentric View Transform:</strong> a <em>Novel Egocentric View</em> is specified by robot base motion <span class="math inline">\((\Delta x,\ \Delta y,\ \Delta \theta)\)</span>. <strong>(2) Action Retargeting:</strong> the original joint actions <span class="math inline">\(Q\)</span> is <em>retargeted</em> into the novel robot base frame to yield a kinematically feasible joint actions <span class="math inline">\(\tilde{Q}\)</span>. <strong>(3) Novel Egocentric Observations:</strong> starting from the original observation video <span class="math inline">\(V\)</span>, we mask the robot, reproject the scene to the novel viewpoint, perform hole filling, and apply <strong>EgoViewTransfer</strong> to synthesize the coherent observations <span class="math inline">\(\tilde{V}\)</span>. <strong>(4) Novel Demonstrations & Policy Training:</strong> we obtain aligned pairs <span class="math inline">\((\tilde{V},\ \tilde{Q})\)</span> for training egocentric viewpoint-robust policies.
-            </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- EgoTrajTransfer Section -->
+    <h3 class="title is-4 has-text-centered">EgoTrajTransfer</h3>
+    <section class="hero method">
+      <div class="container is-max-desktop">
+        <div class="hero-body">
+          <img src="./static/images/EgoTrajTransfer.png" style="width:100%; height:auto;">
+          <p>
+            <strong>EgoTrajTransfer pipeline.</strong>
+            Top: source trajectory segmented into motion segments (free-space movement) and skill segments (contact-rich manipulation) by gripper states.
+            Bottom: transferred trajectory using position scaling and orientation interpolation for motion segments, rigid transformation for skill segments.
+          </p>
         </div>
       </div>
     </section>
@@ -197,13 +213,14 @@
     <section class="hero method">
       <div class="container is-max-desktop">
         <div class="hero-body">
-          <img id="egoviewtransfer" autoplay muted loop playsinline height="100%" src="./static/images/double.png" style="width:100%;height:100%;">
-          <p class="has-text-centered" style="font-style: italic; margin-top: 10px;">
-            Architecture of EgoViewTransfer.
+          <img src="./static/images/EgoViewTransfer.png" style="width:100%; height:auto;">
+          <p>
+            <strong>EgoViewTransfer pipeline.</strong>
+            We synthesize novel-viewpoint observations through three stages.
+            First, <em>scene video preparation</em>: reproject the original video to the novel viewpoint, mask the robot region, and inpaint to obtain clean background.
+            Second, <em>robot motion rendering</em>: render robot motion from the transferred trajectory using URDF and camera parameters.
+            Third, <em>conditional video generation</em>: fuse both videos via DiT-based diffusion model with dual-video conditioning.
           </p>
-            <p>
-              <strong>EgoViewTransfer.</strong> <strong>(a) Double reprojection.</strong> It simulates artifacts and occlusions caused by viewpoint change. The double reprojected video are aligned with the original video to form input/label pairs for training. <strong>(b) Architecture of EgoViewTransfer.</strong> The model takes a degraded scene video and a robot video as conditions and generates egocentric observation videos consistent with dual inputs.
-            </p>
         </div>
       </div>
     </section>
@@ -216,84 +233,68 @@
     <h2 class="title">Results</h2>
     <section class="hero method">
     <div class="container is-max-desktop">
-    <div class="hero-body">  
+    <div class="hero-body">
 
-  <h4 class="title">1. Visualization of policy execution in the Simulation.</h4>
+  <!-- ========== 1. Simulation Generation ========== -->
+  <h4 class="title">1. Novel Egocentric Videos Generated by EgoViewTransfer (Simulation).</h4>
   <div class="container is-max-desktop">
     <p class="has-text-centered" style="font-style: italic; margin-bottom: 20px;">
-      Each row shows policy execution for one task across three viewpoints: standard egocentric view and 2 random novel egocentric views.
+      Each video is organized column-wise: <strong>the first column</strong> shows the original egocentric observation, <strong>the second column</strong> shows the ground-truth novel egocentric video, <strong>the third and fourth columns</strong> show the novel-view scene video and robot video inputs, and <strong>the fifth column</strong> presents the novel egocentric video synthesized by EgoViewTransfer.
     </p>
-
-    <!-- Simulation Task: Handover Mic -->
-    <div class="box" style="margin-bottom: 20px;">
-      <h5 class="title is-5 has-text-centered">Handover Mic</h5>
-      <div class="columns is-mobile">
-        <div class="column">
-          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Standard View</strong></p>
+    <div class="columns is-multiline">
+      <div class="column is-full">
+        <div class="box">
+          <h5 class="title is-6 has-text-centered">Adjust Bottle</h5>
           <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
-            <source src="./static/videos/handovermic/standard-view.mp4" type="video/mp4">
-          </video>
-        </div>
-        <div class="column">
-          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 1</strong></p>
-          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
-            <source src="./static/videos/handovermic/novel-view1.mp4" type="video/mp4">
-          </video>
-        </div>
-        <div class="column">
-          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 2</strong></p>
-          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
-            <source src="./static/videos/handovermic/novel-view2.mp4" type="video/mp4">
+            <source src="./static/arx-Generated/Adjust.mp4" type="video/mp4">
           </video>
         </div>
       </div>
-    </div>
-
-    <!-- Simulation Task: Lift Pot -->
-    <div class="box" style="margin-bottom: 20px;">
-      <h5 class="title is-5 has-text-centered">Lift Pot</h5>
-      <div class="columns is-mobile">
-        <div class="column">
-          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Standard View</strong></p>
+      <div class="column is-full">
+        <div class="box">
+          <h5 class="title is-6 has-text-centered">Beat</h5>
           <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
-            <source src="./static/videos/liftpot/standard-view.mp4" type="video/mp4">
-          </video>
-        </div>
-        <div class="column">
-          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 1</strong></p>
-          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
-            <source src="./static/videos/liftpot/novel-view1.mp4" type="video/mp4">
-          </video>
-        </div>
-        <div class="column">
-          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 2</strong></p>
-          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
-            <source src="./static/videos/liftpot/normal-view2.mp4" type="video/mp4">
+            <source src="./static/arx-Generated/beat.mp4" type="video/mp4">
           </video>
         </div>
       </div>
-    </div>
-
-    <!-- Simulation Task: Shake Bottle -->
-    <div class="box" style="margin-bottom: 20px;">
-      <h5 class="title is-5 has-text-centered">Shake Bottle</h5>
-      <div class="columns is-mobile">
-        <div class="column">
-          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Standard View</strong></p>
+      <div class="column is-full">
+        <div class="box">
+          <h5 class="title is-6 has-text-centered">Handover</h5>
           <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
-            <source src="./static/videos/shake/standard-view.mp4" type="video/mp4">
+            <source src="./static/arx-Generated/handover.mp4" type="video/mp4">
           </video>
         </div>
-        <div class="column">
-          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 1</strong></p>
+      </div>
+      <div class="column is-full">
+        <div class="box">
+          <h5 class="title is-6 has-text-centered">Lift</h5>
           <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
-            <source src="./static/videos/shake/novel-view1.mp4" type="video/mp4">
+            <source src="./static/arx-Generated/lift.mp4" type="video/mp4">
           </video>
         </div>
-        <div class="column">
-          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 2</strong></p>
+      </div>
+      <div class="column is-full">
+        <div class="box">
+          <h5 class="title is-6 has-text-centered">Open</h5>
           <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
-            <source src="./static/videos/shake/novel-view2.mp4" type="video/mp4">
+            <source src="./static/arx-Generated/open.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+      <div class="column is-full">
+        <div class="box">
+          <h5 class="title is-6 has-text-centered">Place</h5>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-Generated/place.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+      <div class="column is-full">
+        <div class="box">
+          <h5 class="title is-6 has-text-centered">Put</h5>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-Generated/put.mp4" type="video/mp4">
           </video>
         </div>
       </div>
@@ -302,170 +303,323 @@
   <br>
   <p style="margin-bottom: 30px;"></p>
 
-  <h4 class="title">2. Visualization of policy execution in the Real World.</h4>
+  <!-- ========== 2. Real World Generation ========== -->
+  <h4 class="title">2. Novel Egocentric Videos Generated by EgoViewTransfer (Real World).</h4>
+  <div class="container is-max-desktop">
+    <p class="has-text-centered" style="font-style: italic; margin-bottom: 20px;">
+      Each video is organized column-wise: <strong>the first column</strong> shows the original egocentric observation, <strong>the second and third columns</strong> show the novel-view scene video and robot video inputs, and <strong>the fourth column</strong> presents the novel egocentric video synthesized by EgoViewTransfer.
+    </p>
+    <div class="columns is-multiline">
+      <div class="column is-full">
+        <div class="box">
+          <h5 class="title is-6 has-text-centered">Box Microwave</h5>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/real-Generated/box%20microwave.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+      <div class="column is-full">
+        <div class="box">
+          <h5 class="title is-6 has-text-centered">Close Microwave</h5>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/real-Generated/close%20microwave.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+      <div class="column is-full">
+        <div class="box">
+          <h5 class="title is-6 has-text-centered">Pick Bowl</h5>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/real-Generated/real-pick_bowl-generated.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+      <div class="column is-full">
+        <div class="box">
+          <h5 class="title is-6 has-text-centered">Place Bowl on Basket</h5>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/real-Generated/real-place_bowl_basket-generated.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+      <div class="column is-full">
+        <div class="box">
+          <h5 class="title is-6 has-text-centered">Place Bowl on Plate</h5>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/real-Generated/real-place_bowl_plate-generated.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <p style="margin-bottom: 30px;"></p>
+
+  <!-- ========== 3. Simulation Execution ========== -->
+  <h4 class="title">3. Visualization of Policy Execution in the Simulation.</h4>
+  <div class="container is-max-desktop">
+    <p class="has-text-centered" style="font-style: italic; margin-bottom: 20px;">
+      Each row shows policy execution for one task across three viewpoints: standard egocentric view and 2 random novel egocentric views.
+    </p>
+
+    <!-- Sim Task: Adjust Bottle -->
+    <div class="box" style="margin-bottom: 20px;">
+      <h5 class="title is-5 has-text-centered">Adjust Bottle</h5>
+      <div class="columns is-mobile">
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Standard View</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-videos/adjust%20bottle/std.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 1</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-videos/adjust%20bottle/nov1.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 2</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-videos/adjust%20bottle/nov2.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sim Task: Beat -->
+    <div class="box" style="margin-bottom: 20px;">
+      <h5 class="title is-5 has-text-centered">Beat</h5>
+      <div class="columns is-mobile">
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Standard View</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-videos/beat/std.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 1</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-videos/beat/nov1.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 2</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-videos/beat/nov2.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sim Task: Handover -->
+    <div class="box" style="margin-bottom: 20px;">
+      <h5 class="title is-5 has-text-centered">Handover</h5>
+      <div class="columns is-mobile">
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Standard View</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-videos/handover/std.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 1</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-videos/handover/nov1.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 2</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-videos/handover/nov2.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sim Task: Lift -->
+    <div class="box" style="margin-bottom: 20px;">
+      <h5 class="title is-5 has-text-centered">Lift</h5>
+      <div class="columns is-mobile">
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Standard View</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-videos/lift/std.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 1</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-videos/lift/nov1.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 2</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-videos/lift/nov2.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sim Task: Open -->
+    <div class="box" style="margin-bottom: 20px;">
+      <h5 class="title is-5 has-text-centered">Open</h5>
+      <div class="columns is-mobile">
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Standard View</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-videos/open/std.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 1</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-videos/open/nov1.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 2</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-videos/open/nov2.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sim Task: Place -->
+    <div class="box" style="margin-bottom: 20px;">
+      <h5 class="title is-5 has-text-centered">Place</h5>
+      <div class="columns is-mobile">
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Standard View</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-videos/place/std.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 1</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-videos/place/nov1.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 2</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-videos/place/nov2.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sim Task: Put -->
+    <div class="box" style="margin-bottom: 20px;">
+      <h5 class="title is-5 has-text-centered">Put</h5>
+      <div class="columns is-mobile">
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Standard View</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-videos/put/std.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 1</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-videos/put/nov1.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="column">
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 2</strong></p>
+          <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
+            <source src="./static/arx-videos/put/nov2.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <p style="margin-bottom: 30px;"></p>
+
+  <!-- ========== 4. Real World Execution ========== -->
+  <h4 class="title">4. Visualization of Policy Execution in the Real World.</h4>
   <div class="container is-max-desktop">
     <p class="has-text-centered" style="font-style: italic; margin-bottom: 20px;">
       Each row shows policy execution for one task across three viewpoints: standard egocentric view, counterclockwise novel view, and clockwise novel view.
     </p>
 
-    <!-- Real World Task: Pick Bowl -->
+    <!-- Real Task: Pick Bowl -->
     <div class="box" style="margin-bottom: 20px;">
       <h5 class="title is-5 has-text-centered">Pick Bowl</h5>
       <div class="columns is-mobile">
         <div class="column">
           <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Standard View</strong></p>
           <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
-            <source src="./static/videos/pick-bowl/standard-view.mp4" type="video/mp4">
+            <source src="./static/real-videos/pick-bowl/standard-view.mp4" type="video/mp4">
           </video>
         </div>
         <div class="column">
           <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 1</strong></p>
           <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
-            <source src="./static/videos/pick-bowl/novel-view1.mp4" type="video/mp4">
+            <source src="./static/real-videos/pick-bowl/novel-view1.mp4" type="video/mp4">
           </video>
         </div>
         <div class="column">
           <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 2</strong></p>
           <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
-            <source src="./static/videos/pick-bowl/normal-view2.mp4" type="video/mp4">
+            <source src="./static/real-videos/pick-bowl/normal-view2.mp4" type="video/mp4">
           </video>
         </div>
       </div>
     </div>
 
-    <!-- Real World Task: Place Bowl on Basket -->
+    <!-- Real Task: Place Bowl on Basket -->
     <div class="box" style="margin-bottom: 20px;">
       <h5 class="title is-5 has-text-centered">Place Bowl on Basket</h5>
       <div class="columns is-mobile">
         <div class="column">
           <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Standard View</strong></p>
           <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
-            <source src="./static/videos/place-bowl-basket/basket.mp4" type="video/mp4">
+            <source src="./static/real-videos/place-bowl-basket/basket.mp4" type="video/mp4">
           </video>
         </div>
         <div class="column">
-          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View (Left)</strong></p>
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 1</strong></p>
           <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
-            <source src="./static/videos/place-bowl-basket/basket-left.mp4" type="video/mp4">
+            <source src="./static/real-videos/place-bowl-basket/basket-left.mp4" type="video/mp4">
           </video>
         </div>
         <div class="column">
-          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View (Right)</strong></p>
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 2</strong></p>
           <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
-            <source src="./static/videos/place-bowl-basket/basket-right.mp4" type="video/mp4">
+            <source src="./static/real-videos/place-bowl-basket/basket-right.mp4" type="video/mp4">
           </video>
         </div>
       </div>
     </div>
 
-    <!-- Real World Task: Place Bowl on Plate -->
+    <!-- Real Task: Place Bowl on Plate -->
     <div class="box" style="margin-bottom: 20px;">
       <h5 class="title is-5 has-text-centered">Place Bowl on Plate</h5>
       <div class="columns is-mobile">
         <div class="column">
           <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Standard View</strong></p>
           <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
-            <source src="./static/videos/place-bowl-plate/plate.mp4" type="video/mp4">
+            <source src="./static/real-videos/place-bowl-plate/plate.mp4" type="video/mp4">
           </video>
         </div>
         <div class="column">
-          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View (Left)</strong></p>
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 1</strong></p>
           <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
-            <source src="./static/videos/place-bowl-plate/plate-left.mp4" type="video/mp4">
+            <source src="./static/real-videos/place-bowl-plate/plate-left.mp4" type="video/mp4">
           </video>
         </div>
         <div class="column">
-          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View (Right)</strong></p>
+          <p class="has-text-centered" style="font-size: 0.85em; margin-bottom: 6px;"><strong>Novel View 2</strong></p>
           <video preload="auto" autoplay controls muted loop playsinline style="width:100%;">
-            <source src="./static/videos/place-bowl-plate/plate-right.mp4" type="video/mp4">
+            <source src="./static/real-videos/place-bowl-plate/plate-right.mp4" type="video/mp4">
           </video>
         </div>
       </div>
-    </div>
-  </div>
-  <br>
-  <p style="margin-bottom: 30px;"></p>
-
-  <h4 class="title">3. Novel Egocentric Videos Generated by EgoViewTransfer.</h4>
-  <div class="container is-max-desktop">
-    <p class="has-text-centered" style="font-style: italic; margin-bottom: 30px;">
-      Each video montage is organized column-wise: <strong>the first column</strong> shows the original egocentric observation video, <strong>the second and third columns</strong> show the novel-view scene video and robot video inputs, and <strong>the fourth column</strong> presents the novel egocentric video synthesized by EgoViewTransfer.
-    </p>
-    <div class="columns is-multiline">
-      <div class="column is-full">
-        <div class="box">
-          <h4 class="title is-5 has-text-centered">Simulation: Handover Mic</h4>
-          <video preload="auto" poster="" autoplay controls muted loop playsinline style="width:100%;height:100%;">
-            <source src="./static/videos/sim-handover_mic-generated.mp4" type="video/mp4">
-          </video>
-        </div>
-      </div>
-      <div class="column is-full">
-        <div class="box">
-          <h4 class="title is-5 has-text-centered">Simulation: Lift Pot</h4>
-          <video preload="auto" poster="" autoplay controls muted loop playsinline style="width:100%;height:100%;">
-            <source src="./static/videos/sim-lift_pot-generated.mp4" type="video/mp4">
-          </video>
-        </div>
-      </div>
-      <div class="column is-full">
-        <div class="box">
-          <h4 class="title is-5 has-text-centered">Simulation: Shake Bottle</h4>
-          <video preload="auto" poster="" autoplay controls muted loop playsinline style="width:100%;height:100%;">
-            <source src="./static/videos/sim-shake_bottle-generated.mp4" type="video/mp4">
-          </video>
-        </div>
-      </div>
-      <div class="column is-full">
-        <div class="box">
-          <h4 class="title is-5 has-text-centered">Real World: Pick Bowl</h4>
-          <video preload="auto" poster="" autoplay controls muted loop playsinline style="width:100%;height:100%;">
-            <source src="./static/videos/real-pick_bowl-generated.mp4" type="video/mp4">
-          </video>
-        </div>
-      </div>
-      <div class="column is-full">
-        <div class="box">
-          <h4 class="title is-5 has-text-centered">Real World: Place Bowl on Basket</h4>
-          <video preload="auto" poster="" autoplay controls muted loop playsinline style="width:100%;height:100%;">
-            <source src="./static/videos/real-place_bowl_basket-generated.mp4" type="video/mp4">
-          </video>
-        </div>
-      </div>
-      <div class="column is-full">
-        <div class="box">
-          <h4 class="title is-5 has-text-centered">Real World: Place Bowl on Plate</h4>
-          <video preload="auto" poster="" autoplay controls muted loop playsinline style="width:100%;height:100%;">
-            <source src="./static/videos/real-place_bowl_plate-generated.mp4" type="video/mp4">
-          </video>
-        </div>
-      </div>
-    </div>
-  </div>
-  <br>
-  <p style="margin-bottom: 30px;"></p>
-
-  <h4 class="title">4. Visualization of EgoViewTransfer in Simulation.</h4>
-
-  <div class="container is-max-desktop">
-    <div style="text-align: center;">
-      <p class="has-text-centered" style="font-style: italic; margin-bottom: 10px;">
-        Visualization of EgoViewTransfer in Simulation. The <strong style="color: green;">green</strong> boxes denote the GT video, the <strong style="color: red;">red</strong> boxes denote the Video w/ EgoViewTransfer, and the <strong style="color: blue;">blue</strong> boxes denote the Video w/o EgoViewTransfer (Naive Composition).
-      </p>
-      <img id="simulation_egoviewtransfer" src="./static/images/simulation_egoviewtransfer.png" style="width:100%;height:100%;">
-    </div>
-  </div>
-  <br>
-	<p style="margin-bottom: 30px;"></p>
-
-	<h4 class="title">5. Visualization of EgoViewTransfer in Real World.</h4>
-
-  <div class="container is-max-desktop">
-    <div style="text-align: center;">
-      <p class="has-text-centered" style="font-style: italic; margin-bottom: 10px;">
-        Visualization of EgoViewTransfer in Real World. The <strong style="color: red;">red</strong> boxes denote the Video w/ EgoViewTransfer, the <strong style="color: blue;">blue</strong> boxes denote the Video w/o EgoViewTransfer (Naive Composition).
-      </p>
-      <img id="realworld_egoviewtransfer" src="./static/images/realworld_egoviewtransfer.png" style="width:100%;height:100%;">
     </div>
   </div>
 
